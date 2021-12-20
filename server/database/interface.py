@@ -37,12 +37,12 @@ def is_revoked(jti: str) -> bool:
 # USERS
 # ============================================================================
 
-def create_user(user_name: str, pw_hash: str) -> User:
+def create_user(user_name: str, user_email: str, pw_hash: str) -> User:
     """
     Creates a new user and adds it to the database.
     :return: The new user.
     """
-    user = User(name=user_name, pw_hash=pw_hash)
+    user = User(name=user_name, email=user_email, pw_hash=pw_hash)
 
     db.session.add(user)
     db.session.commit()
@@ -69,6 +69,14 @@ def get_user_by_id(user_id: int) -> Optional[User]:
 
     return user
 
+def get_user_by_email(user_email: str) -> Optional[User]:
+    """
+    Returns the user with a given email if it exists.
+    :return: User object or none.
+    """
+    user = User.query.filter_by(email=user_email).first()
+
+    return user
 
 def search_users(match: str) -> List[User]:
     """

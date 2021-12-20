@@ -5,18 +5,18 @@ from tests.routes.test_helpers.route_test_case import RouteTestCase
 
 class AuthTests(RouteTestCase):
     def test_login(self):
-        name, pwd = 'user1', '1234'
-        self.client.post('users/create', json={'user_name': name, 'password': pwd})
+        name, email, pwd = 'user1', 'test@test.test', '1234'
+        self.client.post('users/create', json={'user_name': name, 'email': email, 'password': pwd})
 
-        res = self.client.post('auth/login', json={'user_name': 'wrong', 'password': pwd})
+        res = self.client.post('auth/login', json={ 'email': 'wrong', 'password': pwd})
         self.assertEqual(res.status_code, 401)
-        self.assertEqual(res.json, {'msg': 'Wrong username or password'})
+        self.assertEqual(res.json, {'msg': 'Wrong email or password'})
 
-        res = self.client.post('auth/login', json={'user_name': name, 'password': 'wrong'})
+        res = self.client.post('auth/login', json={ 'email': email, 'password': 'wrong'})
         self.assertEqual(res.status_code, 401)
-        self.assertEqual(res.json, {'msg': 'Wrong username or password'})
+        self.assertEqual(res.json, {'msg': 'Wrong email or password'})
 
-        res = self.client.post('auth/login', json={'user_name': name, 'password': pwd})
+        res = self.client.post('auth/login', json={ 'email': email, 'password': pwd})
         self.assertEqual(res.status_code, 200)
         self.assertTrue('token' in res.json.keys())
 
@@ -27,9 +27,9 @@ class AuthTests(RouteTestCase):
         self.assertEqual(res.json, {'msg': 'Access'})
 
     def test_logout(self):
-        name, pwd = 'user1', '1234'
-        self.client.post('users/create', json={'user_name': name, 'password': pwd})
-        token = self.client.post('auth/login', json={'user_name': name, 'password': pwd}).json['token']
+        name, email, pwd = 'user1', 'test@test.test', '1234'
+        self.client.post('users/create', json={'user_name': name, 'email': email, 'password': pwd})
+        token = self.client.post('auth/login', json={'email': email, 'password': pwd}).json['token']
 
         # Check logged in
         res = self.client.post('auth/check', headers={'Authorization': f'Bearer {token}'})

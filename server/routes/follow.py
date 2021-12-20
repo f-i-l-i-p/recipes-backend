@@ -32,7 +32,7 @@ def follow():
     """
     data = json.loads(request.data)
 
-    to_follow = interface.get_user_by_name(data['follow'])
+    to_follow = interface.get_user_by_id(data['id'])
     user = interface.get_user_by_id(get_jwt_identity())
 
     interface.follow_user(user, to_follow)
@@ -48,7 +48,7 @@ def unfollow():
     """
     data = json.loads(request.data)
 
-    to_unfollow = interface.get_user_by_name(data['unfollow'])
+    to_unfollow = interface.get_user_by_id(data['id'])
     user = interface.get_user_by_id(get_jwt_identity())
 
     interface.unfollow_user(user, to_unfollow)

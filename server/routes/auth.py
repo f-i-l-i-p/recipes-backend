@@ -30,17 +30,17 @@ def login():
     """
     data = json.loads(request.data)
 
-    user_name = data['user_name']
+    user_email = data['email']
     password = data['password']
 
-    user = interface.get_user_by_name(user_name)
+    user = interface.get_user_by_email(user_email)
 
     # If user exists and correct password
     if user and bcrypt.check_password_hash(user.pw_hash, password):
         token = create_access_token(identity=user.id)
         return {'token': token}, 200
 
-    return {'msg': 'Wrong username or password'}, 401
+    return {'msg': 'Wrong email or password'}, 401
 
 
 @auth_api.route('/logout', methods=['POST'])

@@ -18,7 +18,7 @@ class InterfaceTests(unittest.TestCase):
 
     def test_create_user(self):
         name = "this is a long name with weird characters Ä#¶[$¤½?';{£ħœ|"
-        user = interface.create_user(name, "1234")
+        user = interface.create_user(name, "email@test.test", "1234")
 
         self.assertEqual(type(user), User, "Incorrect return type")
         self.assertEqual(user.name, name), "Incorrect name"
@@ -29,14 +29,21 @@ class InterfaceTests(unittest.TestCase):
 
     def test_get_user_by_name(self):
         name = "this is a long name with weird characters Ä#¶[$¤½?';{£ħœ|"
-        user1 = interface.create_user(name, "1234")
+        user1 = interface.create_user(name, "email@test.test", "1234")
         user2 = interface.get_user_by_name(name)
+        
+        self.assertEqual(user1, user2, "Returned wrong user")
+        self.assertIsNone(interface.get_user_by_name("Wrong_name"), "Should return None")
+
+    def test_get_user_by_email(self):
+        user1 = interface.create_user("name", "email@test.test", "1234")
+        user2 = interface.get_user_by_name("name")
 
         self.assertEqual(user1, user2, "Returned wrong user")
         self.assertIsNone(interface.get_user_by_name("Wrong_name"), "Should return None")
 
     def test_get_user_by_id(self):
-        user1 = interface.create_user("filip", "1234")
+        user1 = interface.create_user("filip", "email@test.test", "1234")
         user2 = interface.get_user_by_id(user1.id)
 
         self.assertEqual(user1, user2, "Returned wrong user")
@@ -45,7 +52,7 @@ class InterfaceTests(unittest.TestCase):
     def test_search_users(self):
         names = ["user1", "user2", "user3", "£$€¥¡@]", "test1", "test2"]
         for name in names:
-            interface.create_user(name, "password")
+            interface.create_user(name, name + "@test.test", "password")
 
         users = interface.search_users("no")
         self.assertEqual(users, [])
@@ -67,8 +74,8 @@ class InterfaceTests(unittest.TestCase):
     # ============================================================================
 
     def test_follow_user(self):
-        user1 = interface.create_user("user1", "password")
-        user2 = interface.create_user("user2", "password")
+        user1 = interface.create_user("user1", "user1@test.test", "password")
+        user2 = interface.create_user("user2","user2@test.test", "password")
 
         interface.follow_user(user1, user2)
 
@@ -76,8 +83,8 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(interface.get_user_by_name("user1").following, [user2])
 
     def test_unfollow_user(self):
-        user1 = interface.create_user("user1", "password")
-        user2 = interface.create_user("user2", "password")
+        user1 = interface.create_user("user1", "user1@test.test", "password")
+        user2 = interface.create_user("user2", "user2@test.test", "password")
 
         interface.follow_user(user1, user2)
         interface.unfollow_user(user1, user2)
@@ -99,7 +106,7 @@ class InterfaceTests(unittest.TestCase):
     # ============================================================================
 
     def test_create_comment(self):
-        user = interface.create_user("user", "pw")
+        user = interface.create_user("user", "email@test.test", "pw")
         recipe = interface.create_recipe(user, "recipe", "ingredients", "instructions", "image")
 
         comment1 = interface.create_comment(user, recipe, "hello")
@@ -115,7 +122,7 @@ class InterfaceTests(unittest.TestCase):
     # ============================================================================
 
     def test_create_recipe(self):
-        user = interface.create_user("user", "pw")
+        user = interface.create_user("user", "email@test.test", "pw")
         name = "Recipe" * 100
         ingredients = "Ingredient\n" * 10000
         instructions = "Instruction\n" * 10000
@@ -132,7 +139,7 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(user.recipes, [recipe])
 
     def test_search_recipes(self):
-        user = interface.create_user("user", "pw")
+        user = interface.create_user("user", "email@test.test", "pw")
         recipe_names = ["recipe1", "recipe2", "recipe3", "£@$£@$€", "test1", "test2"]
         for name in recipe_names:
             interface.create_recipe(user, name, "ingredients", "instructions", "image")
@@ -155,7 +162,7 @@ class InterfaceTests(unittest.TestCase):
 
     def test_latest_recipes(self):
         user_names = ["user1", "user2", "user3"]
-        users = [interface.create_user(user_name, "1234") for user_name in user_names]
+        users = [interface.create_user(user_name, user_name + "@test.test", "1234") for user_name in user_names]
         recipe_names = ["recipe1", "recipe2", "recipe3", "recipe4", "recipe5"]
         recipes = []
 
@@ -187,7 +194,7 @@ class InterfaceTests(unittest.TestCase):
 
     def test_like_recipe(self):
         user_names = ["user0", "user1", "user2"]
-        users = [interface.create_user(user_name, "1234") for user_name in user_names]
+        users = [interface.create_user(user_name, user_name + "@test.test", "1234") for user_name in user_names]
         recipe_names = ["recipe0", "recipe1", "recipe2", "recipe3", "recipe4"]
         recipes = []
 
@@ -213,7 +220,7 @@ class InterfaceTests(unittest.TestCase):
 
     def test_stop_like_recipe(self):
         user_names = ["user0", "user1", "user2"]
-        users = [interface.create_user(user_name, "1234") for user_name in user_names]
+        users = [interface.create_user(user_name, user_name + "@test.test", "1234") for user_name in user_names]
         recipe_names = ["recipe0", "recipe1", "recipe2", "recipe3", "recipe4"]
         recipes = []
 

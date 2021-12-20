@@ -20,13 +20,14 @@ def create():
     data = json.loads(request.data)
 
     user_name = data['user_name']
+    email = data['email']
     password = data['password']
 
-    if interface.get_user_by_name(user_name):
-        return {'msg': "Username already taken"}, 409
+    if interface.get_user_by_email(email):
+        return {'msg': "Email already in use"}, 409
 
     password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-    interface.create_user(user_name, password_hash)
+    interface.create_user(user_name, email, password_hash)
 
     return '', 200
 

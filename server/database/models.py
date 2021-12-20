@@ -1,3 +1,4 @@
+from enum import unique
 from server.database.handler import db
 
 
@@ -21,6 +22,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, nullable=False, unique=True)
     pw_hash = db.Column(db.String, nullable=False)
 
     following = db.relationship('User',

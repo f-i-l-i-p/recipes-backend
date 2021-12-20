@@ -3,17 +3,17 @@ Helper functions for making requests.
 """
 
 
-def create_and_log_in_user(client, user_name='user1', user_pw='1234') -> str:
-    create_user(client, user_name, user_pw)
-    return log_in_user(client, user_name, user_pw)
+def create_and_log_in_user(client, user_name='user1', email='test@test.test', user_pw='1234') -> str:
+    create_user(client, user_name, email, user_pw)
+    return log_in_user(client, email, user_pw)
 
 
-def create_user(client, user_name='user1', user_pw='1234') -> None:
-    client.post('users/create', json={'user_name': user_name, 'password': user_pw})
+def create_user(client, user_name='user1', email='test@test.test', user_pw='1234') -> None:
+    client.post('users/create', json={'user_name': user_name, 'email': email, 'password': user_pw})
 
 
-def log_in_user(client, user_name, user_pw) -> str:
-    res = client.post('auth/login', json={'user_name': user_name, 'password': user_pw})
+def log_in_user(client, email, user_pw) -> str:
+    res = client.post('auth/login', json={'email': email, 'password': user_pw})
     return res.json['token']
 
 
