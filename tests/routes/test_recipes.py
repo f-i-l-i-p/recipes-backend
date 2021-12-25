@@ -34,5 +34,5 @@ class RecipesTests(RouteTestCase):
                                               {'id': 2, 'name': 'recipe1', 'user': 'user'},
                                               {'id': 1, 'name': 'recipe0', 'user': 'user'}])
 
-        if __name__ == '__main__':
-            unittest.main()
+if __name__ == '__main__':
+    unittest.main()

@@ -1,5 +1,4 @@
 import unittest
-
 from server.database import handler, interface
 from server.database.handler import db
 from server.database.models import User
@@ -112,7 +111,7 @@ class InterfaceTests(unittest.TestCase):
         interface.create_friend_request(user1, user2)
         interface.create_friend_request(user1, user3)
 
-        interface.accept_friend_request(user1, user3)
+        interface.accept_friend_request(user1, user2)
         interface.accept_friend_request(user3, user1)
 
         self.assertEqual(user1.outgoing_friend_requests, [])

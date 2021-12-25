@@ -5,7 +5,7 @@ from flask import Flask
 
 from server.database import handler
 from server.routes.auth import auth_api, bcrypt, jwt
-from server.routes.follow import follow_api
+from server.routes.friends import friend_api
 from server.routes.recipes import recipe_api
 from server.routes.users import user_api
 
@@ -19,7 +19,7 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)
 
 app.register_blueprint(auth_api, url_prefix='/auth')
 app.register_blueprint(recipe_api, url_prefix='/recipes')
-app.register_blueprint(follow_api, url_prefix='/follow')
+app.register_blueprint(friend_api, url_prefix='/friends')
 app.register_blueprint(user_api, url_prefix='/users')
 
 handler.db.init_app(app)

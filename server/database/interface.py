@@ -122,6 +122,7 @@ def accept_friend_request(user1: User, user2: User) -> None:
 
     if (user2 not in user1.friends):
         user1.friends.append(user2)
+        user2.friends.append(user1)
         db.session.commit()
 
 
@@ -131,6 +132,7 @@ def remove_friendship(user1: User, user2: User) -> None:
     """
     if (user2 in user1.friends):
         user1.friends.remove(user2)
+        user2.friends.remove(user1)
         db.session.commit()
 
 
