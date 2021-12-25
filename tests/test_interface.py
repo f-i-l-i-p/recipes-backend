@@ -23,7 +23,8 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(type(user), User, "Incorrect return type")
         self.assertEqual(user.name, name), "Incorrect name"
         self.assertEqual(user.pw_hash, "1234"), "Incorrect pw hash"
-        self.assertEqual(user.following, [])
+        self.assertEqual(user.outgoing_friend_requests, [])
+        self.assertEqual(user.incoming_friend_requests, [])
         self.assertEqual(user.comments, [])
         self.assertEqual(user.recipes, [])
 
@@ -70,10 +71,10 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual([user.name for user in users], ["user1", "user2", "user3", "£$€¥¡@]", "test1", "test2"])
 
     # ============================================================================
-    # FOLLOWING
+    # FRIENDS
     # ============================================================================
 
-    def test_follow_user(self):
+    """def test_follow_user(self):
         user1 = interface.create_user("user1", "user1@test.test", "password")
         user2 = interface.create_user("user2","user2@test.test", "password")
 
@@ -99,7 +100,18 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(user1.following, [])
         self.assertEqual(interface.get_user_by_name("user1").following, [])
         self.assertEqual(user2.following, [user1])
-        self.assertEqual(interface.get_user_by_name("user2").following, [user1])
+        self.assertEqual(interface.get_user_by_name("user2").following, [user1])"""
+
+    def test_create_friend_request(self):
+        user1 = interface.create_user("user1", "user1@test.test", "password")
+        user2 = interface.create_user("user2", "user2@test.test", "password")
+
+        interface.create_friend_request(user1, user2)
+
+        self.assertEqual(user1.outgoing_friend_requests, [user2])
+        self.assertEqual(user1.incoming_friend_requests, [])
+        self.assertEqual(user2.outgoing_friend_requests, [])
+        self.assertEqual(user2.incoming_friend_requests, [user1])
 
     # ============================================================================
     # COMMENTS

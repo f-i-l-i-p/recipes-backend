@@ -89,7 +89,7 @@ def search_users(match: str) -> List[User]:
 
 
 # ============================================================================
-# FOLLOWING
+# FRIENDS
 # ============================================================================
 
 def follow_user(user: User, user_to_follow: User) -> None:
@@ -113,6 +113,15 @@ def unfollow_user(user: User, user_to_unfollow: User) -> None:
     user.following.remove(user_to_unfollow)
     db.session.commit()
 
+
+def create_friend_request(sender: User, receiver: User) -> None:
+    """
+    Creates a new friend request.
+    :param sender: Use who sends the request.
+    :param receiver: Use who should receve the request.
+    """
+    sender.outgoing_friend_requests.append(receiver)
+    db.session.commit()
 
 # ============================================================================
 # COMMENTS

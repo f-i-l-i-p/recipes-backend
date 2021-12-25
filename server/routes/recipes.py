@@ -19,8 +19,8 @@ def create():
     """
     data = json.loads(request.data)
     name = data['name']
-    ingredients = data['ingredients']
-    instructions = data['instructions']
+    ingredients = json.dumps(data['ingredients'])
+    instructions = json.dumps(['instructions'])
     image = data['image']
 
     user = interface.get_user_by_id(get_jwt_identity())
@@ -136,6 +136,7 @@ def latest():
     """
     Returns a list with the latest recipes created by the logged in user and its followed users.
     If a match is given, it will only return recipes with match as a substring.
+    # TODO: Update description
     """
     data = json.loads(request.data)
 
@@ -146,7 +147,8 @@ def latest():
 
     user = interface.get_user_by_id(get_jwt_identity())
 
-    recipe_creators = user.following + [user]
+    #recipe_creators = user.following + [user]
+    recipe_creators = [user]
     recipes = interface.latest_recipes(recipe_creators, match)
 
     result = [{'id': recipe.id, 'name': recipe.name, 'user': recipe.user.name}

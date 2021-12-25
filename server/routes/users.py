@@ -38,6 +38,7 @@ def search():
     """
     Searches for users with their name.
     Returns a list with dicts containing the keys ´name´ and ´following´.
+    # TODO: Update description
     """
     data = json.loads(request.data)
 
@@ -50,8 +51,6 @@ def search():
     for user in users:
         if user.name == this_user.name:
             continue
-        elif user in this_user.following:
-            result.append({'name': user.name, 'following': True})
         else:
             result.append({'name': user.name, 'following': False})
 
