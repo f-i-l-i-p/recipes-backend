@@ -92,36 +92,47 @@ def search_users(match: str) -> List[User]:
 # FRIENDS
 # ============================================================================
 
-def follow_user(user: User, user_to_follow: User) -> None:
-    """
-    Makes a user follow another.
-    """
-    if user_to_follow in user.following:
-        return
-
-    user.following.append(user_to_follow)
-    db.session.commit()
-
-
-def unfollow_user(user: User, user_to_unfollow: User) -> None:
-    """
-    Makes a user unfollow another.
-    """
-    if user_to_unfollow not in user.following:
-        return
-
-    user.following.remove(user_to_unfollow)
-    db.session.commit()
-
-
 def create_friend_request(sender: User, receiver: User) -> None:
     """
     Creates a new friend request.
-    :param sender: Use who sends the request.
-    :param receiver: Use who should receve the request.
+    :param sender: User who sends the request.
+    :param receiver: User who should receve the request.
     """
     sender.outgoing_friend_requests.append(receiver)
     db.session.commit()
+
+
+def cancel_friend_request(user1: User, user2: User) -> None:
+    """
+    Cancels friend requests between two users.
+    """
+    if (user2 in user1.outgoing_friend_requests):
+        user1.outgoing_friend_requests.remove(user2)
+        db.session.commit()
+    elif (user1 in user2.outgoing_friend_requests):
+        user2.outgoing_friend_requests.remove(user1)
+        db.session.commit()
+
+
+def accept_friend_request(user1: User, user2: User) -> None:
+    """
+    Accepts a friend request between two users.
+    """
+    cancel_friend_request(user1, user2)
+
+    if (user2 not in user1.friends):
+        user1.friends.append(user2)
+        db.session.commit()
+
+
+def remove_friendship(user1: User, user2: User) -> None:
+    """
+    Removes friendship between two users.
+    """
+    if (user2 in user1.friends):
+        user1.friends.remove(user2)
+        db.session.commit()
+
 
 # ============================================================================
 # COMMENTS

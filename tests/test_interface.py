@@ -74,34 +74,6 @@ class InterfaceTests(unittest.TestCase):
     # FRIENDS
     # ============================================================================
 
-    """def test_follow_user(self):
-        user1 = interface.create_user("user1", "user1@test.test", "password")
-        user2 = interface.create_user("user2","user2@test.test", "password")
-
-        interface.follow_user(user1, user2)
-
-        self.assertEqual(user1.following, [user2])
-        self.assertEqual(interface.get_user_by_name("user1").following, [user2])
-
-    def test_unfollow_user(self):
-        user1 = interface.create_user("user1", "user1@test.test", "password")
-        user2 = interface.create_user("user2", "user2@test.test", "password")
-
-        interface.follow_user(user1, user2)
-        interface.unfollow_user(user1, user2)
-
-        self.assertEqual(user1.following, [])
-        self.assertEqual(interface.get_user_by_name("user1").following, [])
-
-        interface.follow_user(user1, user2)
-        interface.follow_user(user2, user1)
-        interface.unfollow_user(user1, user2)
-
-        self.assertEqual(user1.following, [])
-        self.assertEqual(interface.get_user_by_name("user1").following, [])
-        self.assertEqual(user2.following, [user1])
-        self.assertEqual(interface.get_user_by_name("user2").following, [user1])"""
-
     def test_create_friend_request(self):
         user1 = interface.create_user("user1", "user1@test.test", "password")
         user2 = interface.create_user("user2", "user2@test.test", "password")
@@ -112,6 +84,62 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(user1.incoming_friend_requests, [])
         self.assertEqual(user2.outgoing_friend_requests, [])
         self.assertEqual(user2.incoming_friend_requests, [user1])
+
+    def test_cancel_friend_request(self):
+        user1 = interface.create_user("user1", "user1@test.test", "password")
+        user2 = interface.create_user("user2", "user2@test.test", "password")
+
+        interface.create_friend_request(user1, user2)
+        interface.cancel_friend_request(user1, user2)
+
+        self.assertEqual(user1.outgoing_friend_requests, [])
+        self.assertEqual(user1.incoming_friend_requests, [])
+        self.assertEqual(user2.outgoing_friend_requests, [])
+        self.assertEqual(user2.incoming_friend_requests, [])
+
+        interface.create_friend_request(user1, user2)
+        interface.cancel_friend_request(user2, user1)
+
+        self.assertEqual(user1.outgoing_friend_requests, [])
+        self.assertEqual(user1.incoming_friend_requests, [])
+        self.assertEqual(user2.outgoing_friend_requests, [])
+        self.assertEqual(user2.incoming_friend_requests, [])
+
+    def test_accept_friend_request(self):
+        user1 = interface.create_user("user1", "user1@test.test", "password")
+        user2 = interface.create_user("user2", "user2@test.test", "password")
+        user3 = interface.create_user("user3", "user3@test.test", "password")
+        interface.create_friend_request(user1, user2)
+        interface.create_friend_request(user1, user3)
+
+        interface.accept_friend_request(user1, user3)
+        interface.accept_friend_request(user3, user1)
+
+        self.assertEqual(user1.outgoing_friend_requests, [])
+        self.assertEqual(user1.incoming_friend_requests, [])
+        self.assertEqual(user1.friends, [user2, user3])
+        self.assertEqual(user2.outgoing_friend_requests, [])
+        self.assertEqual(user2.incoming_friend_requests, [])
+        self.assertEqual(user2.friends, [user1])
+        self.assertEqual(user3.outgoing_friend_requests, [])
+        self.assertEqual(user3.incoming_friend_requests, [])
+        self.assertEqual(user3.friends, [user1])
+
+    def test_remove_friendship(self):
+        user1 = interface.create_user("user1", "user1@test.test", "password")
+        user2 = interface.create_user("user2", "user2@test.test", "password")
+        user3 = interface.create_user("user3", "user3@test.test", "password")
+        interface.create_friend_request(user1, user2)
+        interface.create_friend_request(user1, user3)
+        interface.accept_friend_request(user1, user2)
+        interface.accept_friend_request(user1, user3)
+
+        interface.remove_friendship(user1, user2)
+        interface.remove_friendship(user3, user1)
+
+        self.assertEqual(user1.friends, [])
+        self.assertEqual(user2.friends, [])
+        self.assertEqual(user3.friends, [])
 
     # ============================================================================
     # COMMENTS
