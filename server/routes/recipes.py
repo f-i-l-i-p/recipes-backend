@@ -20,7 +20,7 @@ def create():
     data = json.loads(request.data)
     name = data['name']
     ingredients = json.dumps(data['ingredients'])
-    instructions = json.dumps(['instructions'])
+    instructions = json.dumps(data['instructions'])
     image = data['image']
 
     user = interface.get_user_by_id(get_jwt_identity())
