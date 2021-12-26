@@ -41,10 +41,17 @@ def get():
 
     recipe = interface.get_recipe_by_id(id)
 
-    result = {'id': recipe.id, 'name': recipe.name,
-              'ingredients': recipe.ingredients, 'instructions': recipe.instructions, 'user': recipe.user.name,
-              'comments': [{'user': comment.user.name, 'text': comment.text} for comment in recipe.comments],
-              'likes': len(recipe.liked_by), 'image': recipe.image}
+    result = {'id': recipe.id,
+              'name': recipe.name,
+              'ingredients': json.loads(recipe.ingredients),
+              'instructions': json.loads(recipe.instructions),
+              'user': recipe.user.name,
+              'comments': [{
+                  'user': comment.user.name,
+                  'text': comment.text
+              } for comment in recipe.comments],
+              'likes': len(recipe.liked_by),
+              'image': recipe.image}
 
     return result, 200
 
