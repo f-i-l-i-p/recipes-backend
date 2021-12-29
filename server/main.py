@@ -2,6 +2,7 @@ import datetime
 import os
 
 from flask import Flask
+from flask_cors import CORS
 
 from server.database import handler
 from server.routes.auth import auth_api, bcrypt, jwt
@@ -25,6 +26,8 @@ app.register_blueprint(user_api, url_prefix='/users')
 handler.db.init_app(app)
 bcrypt.init_app(app)
 jwt.init_app(app)
+
+CORS(app)
 
 
 def init():
