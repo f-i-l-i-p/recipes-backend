@@ -177,6 +177,28 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(recipe.comments, [])
         self.assertEqual(user.recipes, [recipe])
 
+    def test_change_recipe(self):
+        user = interface.create_user("user", "user@example.com", "pw")
+        name = "old name"
+        ingredients = "old ingredients"
+        instructions = "old instructions"
+        image = "old image"
+        recipe = interface.create_recipe(user, name, ingredients, instructions, image)
+        
+        new_name = "new name"
+        new_ingredients = "new ingredients"
+        new_instructions = "new instructions"
+        new_image = "new image"
+        interface.change_recipe(recipe.id, new_name, new_ingredients, new_instructions, new_image)
+
+        new_recipe = interface.get_recipe_by_id(recipe.id)
+        self.assertEqual(recipe.id, new_recipe.id)
+        self.assertEqual(new_recipe.user, user)
+        self.assertEqual(new_recipe.name, new_name)
+        self.assertEqual(new_recipe.ingredients, new_ingredients)
+        self.assertEqual(new_recipe.instructions, new_instructions)
+        self.assertEqual(new_recipe.image, new_image)
+
     def test_search_recipes(self):
         user = interface.create_user("user", "email@test.test", "pw")
         recipe_names = ["recipe1", "recipe2", "recipe3", "£@$£@$€", "test1", "test2"]
