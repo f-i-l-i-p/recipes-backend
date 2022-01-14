@@ -31,10 +31,12 @@ class RecipesTests(RouteTestCase):
         old_ingredients = "old"
         old_instructions = "old instructions"
         old_image = "old image"
-        old_recipe = self.data.create_recipe(user, old_name, old_ingredients, old_instructions, old_image)
+        old_recipe = self.data.create_recipe(
+            user, old_name, old_ingredients, old_instructions, old_image)
 
         new_name = "new name"
-        new_ingredients = ['new ingredient 1', 'new ingredient 2', 'new ingredient 3']
+        new_ingredients = ['new ingredient 1',
+                           'new ingredient 2', 'new ingredient 3']
         new_instructions = ["new instruction 1", "new instruction 2"]
         new_image = "new image"
 
@@ -49,6 +51,19 @@ class RecipesTests(RouteTestCase):
         self.assertEqual(new_recipe.ingredients, json.dumps(new_ingredients))
         self.assertEqual(new_recipe.instructions, json.dumps(new_instructions))
         self.assertEqual(new_recipe.image, new_image)
+
+    def test_delete(self):
+        user = create_user(self, "user")
+        token = login_user(self, "user")
+        recipe = self.data.create_recipe(user, "", "", "", "")
+
+        res = self.client.post('recipes/delete',
+                               json={'id': recipe.id},
+                               headers={'Authorization': f'Bearer {token}'})
+
+        self.assertEqual(res.status_code, 200)
+        user = self.data.get_user_by_name("user")
+        self.assertEqual(user.recipes, [])
 
     def test_get(self):
         user = create_user(self, "user")

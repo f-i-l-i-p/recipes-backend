@@ -53,6 +53,24 @@ def change():
     return "Wrong recipe id", 400
 
 
+@recipe_api.route('/delete', methods=['POST'])
+@jwt_required()
+def delete():
+    """
+    Lets the logged in user delete a recipe.
+    """
+    data = json.loads(request.data)
+    recipe_id = data['id']
+    user = interface.get_user_by_id(get_jwt_identity())
+
+    for recipe in user.recipes:
+        if recipe_id == recipe.id:
+            interface.delete_recipe(recipe)
+            return '', 200
+
+    return "Wrong recipe id", 400
+
+
 @recipe_api.route('/get', methods=['POST'])
 @jwt_required()
 def get():

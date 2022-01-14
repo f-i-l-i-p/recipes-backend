@@ -69,6 +69,7 @@ def get_user_by_id(user_id: int) -> Optional[User]:
 
     return user
 
+
 def get_user_by_email(user_email: str) -> Optional[User]:
     """
     Returns the user with a given email if it exists.
@@ -78,12 +79,14 @@ def get_user_by_email(user_email: str) -> Optional[User]:
 
     return user
 
+
 def search_users(match: str) -> List[User]:
     """
     Returns all users that has ´match´ as a substring in the username.
     :return: List with User objects.
     """
-    users = User.query.filter(func.lower(User.name).contains(match.lower())).all()
+    users = User.query.filter(func.lower(
+        User.name).contains(match.lower())).all()
 
     return users
 
@@ -196,6 +199,14 @@ def change_recipe(recipe_id: int, new_name: str, new_ingredients: str, new_instr
     db.session.commit()
 
 
+def delete_recipe(recipe: Recipe) -> None:
+    """
+    Deletes a given recipe.
+    """
+    db.session.delete(recipe)
+    db.session.commit()
+
+
 def get_recipe_by_id(recipe_id: int) -> Optional[Recipe]:
     """
     Returns the recipe with a given id if it exists.
@@ -211,7 +222,8 @@ def search_recipes(match: str) -> List[Recipe]:
     Returns all recipes that has ´match´ as a substring in the recipe name.
     :return: List with Recipe objects.
     """
-    recipes = Recipe.query.filter(func.lower(Recipe.name).contains(match.lower())).all()
+    recipes = Recipe.query.filter(func.lower(
+        Recipe.name).contains(match.lower())).all()
 
     return recipes
 
@@ -228,10 +240,8 @@ def latest_recipes(users: List[User], match: str) -> List[Recipe]:
         for recipe in user.recipes:
             recipe_ids.append(recipe.id)
 
-    recipes = Recipe.query.filter(and_(Recipe.id.in_(recipe_ids),
-                                       func.lower(Recipe.name).contains(match.lower()))). \
-        order_by(Recipe.id.desc()). \
-        all()
+    recipes = Recipe.query.filter(and_(Recipe.id.in_(recipe_ids), func.lower(
+        Recipe.name).contains(match.lower()))).order_by(Recipe.id.desc()).all()
 
     return recipes
 

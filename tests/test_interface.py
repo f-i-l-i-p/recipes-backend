@@ -1,3 +1,4 @@
+from select import select
 import unittest
 from server.database import handler, interface
 from server.database.handler import db
@@ -198,6 +199,22 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(new_recipe.ingredients, new_ingredients)
         self.assertEqual(new_recipe.instructions, new_instructions)
         self.assertEqual(new_recipe.image, new_image)
+    
+    def test_delete_recipe(self):
+        user1 = interface.create_user("user1", "user1@example.com", "pw")
+        user2 = interface.create_user("user2", "user2@example.com", "pw")
+        recipe1 = interface.create_recipe(user1, "1", "", "", "")
+        recipe2 = interface.create_recipe(user1, "2", "", "", "")
+        interface.like_recipe(user2, recipe1)
+
+        self.assertEqual(user1.recipes, [recipe1, recipe2])
+        self.assertEqual(user2.liked_recipes, [recipe1])
+
+        interface.delete_recipe(recipe1)
+
+        user1, user2 = interface.get_user_by_id(1), interface.get_user_by_id(2)
+        self.assertEqual(user1.recipes, [recipe2])
+        self.assertEqual(user2.liked_recipes, [])
 
     def test_search_recipes(self):
         user = interface.create_user("user", "email@test.test", "pw")
