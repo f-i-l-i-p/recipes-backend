@@ -16,7 +16,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = handler.get_db_uri()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.environ['SERVER_SECRET']
 app.config['JWT_TOKEN_LOCATION'] = ['headers']
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=1)
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(weeks=52)
 
 app.register_blueprint(auth_api, url_prefix='/auth')
 app.register_blueprint(recipe_api, url_prefix='/recipes')
