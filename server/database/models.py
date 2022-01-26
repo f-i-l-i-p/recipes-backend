@@ -1,4 +1,5 @@
 from server.database.handler import db
+from typing import Dict
 
 
 class TokenBlocklist(db.Model):
@@ -51,6 +52,12 @@ class User(db.Model):
 
     comments = db.relationship("Comment")
     recipes = db.relationship("Recipe")
+
+    def get_public_data(self) -> Dict:
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
 
 
 class Comment(db.Model):

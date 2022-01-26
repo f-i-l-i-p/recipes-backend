@@ -7,8 +7,32 @@ from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from server.database import interface
+from server.database.models import User
 
 friend_api = Blueprint('friend_api', __name__)
+
+
+@friend_api.route('/list-friends', methods=['POST'])
+@jwt_required()
+def list_firends():
+    """
+    Returns the current friends of this user.
+    """
+    user = interface.get_user_by_id(get_jwt_identity())
+
+    accepted_friends = [friend.get_public_data() for friend in user.friends]
+    outgoing_friend_requests = [
+        friend.get_public_data() for friend in user.outgoing_friend_requests
+    ]
+    incoming_friend_requests = [
+        friend.get_public_data() for friend in user.incoming_friend_requests
+    ]
+
+    return {
+        "friends": accepted_friends,
+        "outgoing_requests": outgoing_friend_requests,
+        "incoming_requests": incoming_friend_requests
+    }, 200
 
 
 @friend_api.route('/create-friend-request', methods=['POST'])
