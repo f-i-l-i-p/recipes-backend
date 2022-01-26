@@ -36,9 +36,7 @@ def create():
 @jwt_required()
 def search():
     """
-    Searches for users with their name.
-    Returns a list with dicts containing the keys ´name´ and ´following´.
-    # TODO: Update description
+    Searches for users with their name. Excludes the logged in user.
     """
     data = json.loads(request.data)
 
@@ -47,12 +45,6 @@ def search():
 
     users = interface.search_users(search_term)
 
-    result = []
-    for user in users:
-        if user.name == this_user.name:
-            continue
-        else:
-            result.append({'name': user.name, 'following': False})
+    result = [user.get_public_data() for user in users if not user.id == this_user.id]
 
-    return {'result': result}, 200
-
+    return {"result": result}, 200
