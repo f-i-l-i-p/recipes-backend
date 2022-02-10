@@ -177,3 +177,20 @@ def latest():
               for recipe in recipes]
 
     return {'result': result}, 200
+
+
+@recipe_api.route('/image/<recipe_id>')
+#@jwt_required()
+def image(recipe_id):
+    """
+    Returns the image for a recipe.
+    """
+    # TODO: Check if this is allowed for this user.
+    recipe = interface.get_recipe_by_id(recipe_id)
+
+    if not recipe:
+        return '', 404
+
+    return recipe.image, 200
+
+
