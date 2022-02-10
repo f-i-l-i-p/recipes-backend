@@ -3,8 +3,10 @@ API for handling recipes.
 """
 import json
 
-from flask import Blueprint, request
+from flask import Blueprint, request, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from io import BytesIO
+from urllib.request import urlopen
 
 from server.database import interface
 
@@ -179,18 +181,18 @@ def latest():
     return {'result': result}, 200
 
 
-@recipe_api.route('/image/<recipe_id>')
-#@jwt_required()
-def image(recipe_id):
+@recipe_api.route('/images/<int:recipe_id>')
+def get_image(recipe_id):
     """
     Returns the image for a recipe.
     """
     # TODO: Check if this is allowed for this user.
     recipe = interface.get_recipe_by_id(recipe_id)
 
-    if not recipe:
+    if not (recipe and recipe.image):
         return '', 404
 
-    return recipe.image, 200
+    with urlopen(recipe.image) as response:
+        data = response.read()
 
-
+    return send_file(BytesIO(data), attachment_filename=f'{recipe_id}.jpg')

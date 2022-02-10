@@ -81,6 +81,16 @@ class RecipesTests(RouteTestCase):
 
         self.assertEqual(res.status_code, 200)
 
+    def test_get_image(self):
+        user = create_user(self, "user")
+        token = login_user(self, "user")
+
+        recipe = self.data.create_recipe(user, "", "", "", create_recipe_image())
+
+        res = self.client.get(f'recipes/images/{recipe.id}',
+                                headers={'Authorization': f'Bearer {token}'})
+
+        self.assertEqual(res.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()
