@@ -9,6 +9,7 @@ from io import BytesIO
 from urllib.request import urlopen
 
 from server.database import interface
+from server.database.models import Recipe
 
 recipe_api = Blueprint('recipe_api', __name__)
 
@@ -49,7 +50,8 @@ def change():
 
     for recipe in user.recipes:
         if recipe_id == recipe.id:
-            interface.change_recipe(recipe_id, name, ingredients, instructions, image)
+            interface.change_recipe(
+                recipe_id, name, ingredients, instructions, image)
             return '', 200
 
     return "Wrong recipe id", 400
@@ -91,7 +93,7 @@ def get():
               'instructions': json.loads(recipe.instructions),
               'user': recipe.user.name,
               'likes': len(recipe.liked_by),
-              'image': recipe.image}
+              'image_url': _recipe_img_url(recipe) }
 
     return result, 200
 
@@ -175,7 +177,7 @@ def latest():
     recipe_creators = [user] + user.friends
     recipes = interface.latest_recipes(recipe_creators, match)
 
-    result = [{'id': recipe.id, 'name': recipe.name, 'user': recipe.user.name}
+    result = [{'id': recipe.id, 'name': recipe.name, 'user': recipe.user.name, 'img_url': _recipe_img_url(recipe)}
               for recipe in recipes]
 
     return {'result': result}, 200
@@ -196,3 +198,7 @@ def get_image(recipe_id):
         data = response.read()
 
     return send_file(BytesIO(data), attachment_filename=f'{recipe_id}.jpg')
+
+
+def _recipe_img_url(recipe: Recipe) -> str:
+    return f"{request.url_root}recipes/images/{recipe.id}"
