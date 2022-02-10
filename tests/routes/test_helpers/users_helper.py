@@ -6,7 +6,7 @@ def create_user(test: RouteTestCase, name: str) -> User:
     email, pw = _get_email_and_pw(name)
 
     test.client.post('users/create', json={'user_name': name, 'email': email, 'password': pw})
-    return test.data.get_user_by_name(name)
+    return test.data.get_user_by_email(email)
 
 
 def login_user(test: RouteTestCase, name: str) -> int:

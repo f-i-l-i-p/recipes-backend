@@ -62,7 +62,7 @@ class RecipesTests(RouteTestCase):
                                headers={'Authorization': f'Bearer {token}'})
 
         self.assertEqual(res.status_code, 200)
-        user = self.data.get_user_by_name("user")
+        user = self.data.get_user_by_id(user.id)
         self.assertEqual(user.recipes, [])
 
     def test_get(self):

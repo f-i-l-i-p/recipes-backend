@@ -8,21 +8,23 @@ class TokenBlocklist(db.Model):
     revoked_at = db.Column(db.DateTime, nullable=False)
 
 
-liked_recipes_table = db.Table('liked_recipes_table',
-                               db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                               db.Column('recipe_id', db.Integer, db.ForeignKey('recipes.id')))
+liked_recipes_table = db.Table(
+    'liked_recipes_table',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('recipe_id', db.Integer, db.ForeignKey('recipes.id'))
+)
 
-saved_recipes_table = db.Table('saved_recipes_table',
-                               db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-                               db.Column('recipe_id', db.Integer, db.ForeignKey('recipes.id')))
+friendship = db.Table(
+    'friendships',
+    db.Column('user1_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('user2_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
+)
 
-friendship = db.Table('friendships',
-                      db.Column('user1_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-                      db.Column('user2_id', db.Integer, db.ForeignKey('users.id'), primary_key=True))
-
-friendship_request = db.Table('friendship_requests',
-                              db.Column('requesting_user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-                              db.Column('receiving_user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True))
+friendship_request = db.Table(
+    'friendship_requests',
+    db.Column('requesting_user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('receiving_user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
+)
 
 
 class User(db.Model):
@@ -33,24 +35,27 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False, unique=True)
     pw_hash = db.Column(db.String, nullable=False)
 
-    friends = db.relationship('User',
-                              secondary=friendship,
-                              primaryjoin=id == friendship.c.user1_id,
-                              secondaryjoin=id == friendship.c.user2_id)
+    friends = db.relationship(
+        'User',
+        secondary=friendship,
+        primaryjoin=id == friendship.c.user1_id,
+        secondaryjoin=id == friendship.c.user2_id
+    )
 
-    outgoing_friend_requests = db.relationship('User',
-                                               secondary=friendship_request,
-                                               primaryjoin=id == friendship_request.c.requesting_user_id,
-                                               secondaryjoin=id == friendship_request.c.receiving_user_id,
-                                               backref='incoming_friend_requests')
+    outgoing_friend_requests = db.relationship(
+        'User',
+        secondary=friendship_request,
+        primaryjoin=id == friendship_request.c.requesting_user_id,
+        secondaryjoin=id == friendship_request.c.receiving_user_id,
+        backref='incoming_friend_requests'
+    )
 
-    liked_recipes = db.relationship('Recipe',
-                                    secondary=liked_recipes_table,
-                                    back_populates='liked_by')
+    liked_recipes = db.relationship(
+        'Recipe',
+        secondary=liked_recipes_table,
+        back_populates='liked_by'
+    )
 
-    saved_recipes = db.relationship('Recipe', secondary=saved_recipes_table)
-
-    comments = db.relationship("Comment")
     recipes = db.relationship("Recipe")
 
     def get_public_data(self) -> Dict:
@@ -58,20 +63,6 @@ class User(db.Model):
             "id": self.id,
             "name": self.name,
         }
-
-
-class Comment(db.Model):
-    __tablename__ = 'comments'
-
-    id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.String, nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
-
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    user = db.relationship("User", back_populates="comments")
-
-    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.id'))
-    recipe = db.relationship("Recipe", back_populates="comments")
 
 
 class Recipe(db.Model):
@@ -86,9 +77,8 @@ class Recipe(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship("User", back_populates="recipes")
 
-    comments = db.relationship("Comment", back_populates="recipe")
-
-    liked_by = db.relationship('User',
-                               secondary=liked_recipes_table,
-                               back_populates='liked_recipes')
-
+    liked_by = db.relationship(
+        'User',
+        secondary=liked_recipes_table,
+        back_populates='liked_recipes'
+    )

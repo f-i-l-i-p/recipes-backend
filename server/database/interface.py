@@ -7,7 +7,7 @@ from typing import Optional, List
 from sqlalchemy import and_, func
 
 from server.database.handler import db
-from server.database.models import User, Recipe, Comment, TokenBlocklist
+from server.database.models import User, Recipe, TokenBlocklist
 
 
 # ============================================================================
@@ -46,16 +46,6 @@ def create_user(user_name: str, user_email: str, pw_hash: str) -> User:
 
     db.session.add(user)
     db.session.commit()
-
-    return user
-
-
-def get_user_by_name(user_name: str) -> Optional[User]:
-    """
-    Returns the user with a given name if it exists.
-    :return: User object or none.
-    """
-    user = User.query.filter_by(name=user_name).first()
 
     return user
 
@@ -137,27 +127,6 @@ def remove_friendship(user1: User, user2: User) -> None:
         user1.friends.remove(user2)
         user2.friends.remove(user1)
         db.session.commit()
-
-
-# ============================================================================
-# COMMENTS
-# ============================================================================
-
-def create_comment(user: User, recipe: Recipe, text: str) -> Comment:
-    """
-    Creates a new comment.
-    :param user: User who commented.
-    :param recipe: Recipe that the comment is for.
-    :param text: Comment text.
-    :return: A comment object.
-    """
-    comment = Comment(user_id=user.id, recipe_id=recipe.id,
-                      text=text, date=datetime.now(timezone.utc))
-
-    db.session.add(comment)
-    db.session.commit()
-
-    return comment
 
 
 # ============================================================================

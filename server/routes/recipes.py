@@ -88,35 +88,10 @@ def get():
               'ingredients': json.loads(recipe.ingredients),
               'instructions': json.loads(recipe.instructions),
               'user': recipe.user.name,
-              'comments': [{
-                  'user': comment.user.name,
-                  'text': comment.text
-              } for comment in recipe.comments],
               'likes': len(recipe.liked_by),
               'image': recipe.image}
 
     return result, 200
-
-
-@recipe_api.route('/comment', methods=['POST'])
-@jwt_required()
-def comment():
-    """
-    Adds a comment to a recipe.
-    """
-    data = json.loads(request.data)
-    id = data['id']
-    text = data['text']
-
-    recipe = interface.get_recipe_by_id(id)
-    if recipe is None:
-        return {'msg': 'Can\'t find recipe.'}, 400
-
-    user = interface.get_user_by_id(get_jwt_identity())
-
-    interface.create_comment(user, recipe, text)
-
-    return '', 200
 
 
 @recipe_api.route('/like', methods=['POST'])

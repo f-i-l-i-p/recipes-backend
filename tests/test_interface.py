@@ -25,23 +25,15 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(user.pw_hash, "1234"), "Incorrect pw hash"
         self.assertEqual(user.outgoing_friend_requests, [])
         self.assertEqual(user.incoming_friend_requests, [])
-        self.assertEqual(user.comments, [])
+        self.assertEqual(user.friends, [])
         self.assertEqual(user.recipes, [])
 
-    def test_get_user_by_name(self):
-        name = "this is a long name with weird characters Ä#¶[$¤½?';{£ħœ|"
-        user1 = interface.create_user(name, "email@test.test", "1234")
-        user2 = interface.get_user_by_name(name)
-        
-        self.assertEqual(user1, user2, "Returned wrong user")
-        self.assertIsNone(interface.get_user_by_name("Wrong_name"), "Should return None")
-
     def test_get_user_by_email(self):
-        user1 = interface.create_user("name", "email@test.test", "1234")
-        user2 = interface.get_user_by_name("name")
+        user1 = interface.create_user("name", "email@example.com", "1234")
+        user2 = interface.get_user_by_email("email@example.com")
 
         self.assertEqual(user1, user2, "Returned wrong user")
-        self.assertIsNone(interface.get_user_by_name("Wrong_name"), "Should return None")
+        self.assertIsNone(interface.get_user_by_email("Wrong_email"), "Should return None")
 
     def test_get_user_by_id(self):
         user1 = interface.create_user("filip", "email@test.test", "1234")
@@ -142,22 +134,6 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(user3.friends, [])
 
     # ============================================================================
-    # COMMENTS
-    # ============================================================================
-
-    def test_create_comment(self):
-        user = interface.create_user("user", "email@test.test", "pw")
-        recipe = interface.create_recipe(user, "recipe", "ingredients", "instructions", "image")
-
-        comment1 = interface.create_comment(user, recipe, "hello")
-        comment2 = interface.create_comment(user, recipe, "hello again")
-
-        self.assertEqual(comment1.user, user)
-        self.assertEqual(comment1.recipe, recipe)
-        self.assertEqual(user.comments, [comment1, comment2])
-        self.assertEqual(recipe.comments, [comment1, comment2])
-
-    # ============================================================================
     # RECIPES
     # ============================================================================
 
@@ -175,7 +151,6 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(recipe.ingredients, ingredients)
         self.assertEqual(recipe.instructions, instructions)
         self.assertEqual(recipe.image, image)
-        self.assertEqual(recipe.comments, [])
         self.assertEqual(user.recipes, [recipe])
 
     def test_change_recipe(self):
