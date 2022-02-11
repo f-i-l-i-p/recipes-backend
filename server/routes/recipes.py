@@ -93,7 +93,7 @@ def get():
               'instructions': json.loads(recipe.instructions),
               'user': recipe.user.name,
               'likes': len(recipe.liked_by),
-              'image_url': _recipe_img_url(recipe) }
+              'img_url': _recipe_img_url(recipe)}
 
     return result, 200
 
@@ -188,7 +188,6 @@ def get_image(recipe_id):
     """
     Returns the image for a recipe.
     """
-    # TODO: Check if this is allowed for this user.
     recipe = interface.get_recipe_by_id(recipe_id)
 
     if not (recipe and recipe.image):
@@ -201,4 +200,8 @@ def get_image(recipe_id):
 
 
 def _recipe_img_url(recipe: Recipe) -> str:
+    # Return empty string if image does not exist
+    if not recipe.image:
+        return ""
+
     return f"{request.url_root}recipes/images/{recipe.id}"
