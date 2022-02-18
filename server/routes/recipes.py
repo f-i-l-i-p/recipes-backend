@@ -219,4 +219,5 @@ def _is_valid_img_uri(uri: str) -> bool:
     Returns true if a string is a valid uri that can be saved in the database.
     """
     regex = "data:image/jpeg;base64*."
-    return re.match(regex, uri) != None
+
+    return not uri or re.match(regex, uri)
