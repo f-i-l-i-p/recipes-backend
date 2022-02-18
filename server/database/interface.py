@@ -153,17 +153,16 @@ def create_recipe(user: User, name: str, ingredients: str, instructions: str, im
 
 def change_recipe(recipe_id: int, new_name: str, new_ingredients: str, new_instructions: str, new_image: str) -> None:
     """
-    Changes the content of an existing recipe
-    :param name: New recipe name.
-    :param ingredients: New recipe ingredients.
-    :param instructions: New recipe instructions.
-    :return: The new recipe.
+    Updates an existing recipe. Empty or None values will is ignored.
     """
     recipe = get_recipe_by_id(recipe_id)
-    recipe.name = new_name
-    recipe.ingredients = new_ingredients
-    recipe.instructions = new_instructions
-    recipe.image = new_image
+
+    if not recipe: return
+
+    if new_name: recipe.name = new_name
+    if new_ingredients: recipe.ingredients = new_ingredients
+    if new_instructions: recipe.instructions = new_instructions
+    if new_image: recipe.image = new_image
 
     db.session.commit()
 

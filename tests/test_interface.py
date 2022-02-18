@@ -160,10 +160,10 @@ class InterfaceTests(unittest.TestCase):
         instructions = "old instructions"
         image = "old image"
         recipe = interface.create_recipe(user, name, ingredients, instructions, image)
-        
+
         new_name = "new name"
         new_ingredients = "new ingredients"
-        new_instructions = "new instructions"
+        new_instructions = "" # Should not be updated because it is empty
         new_image = "new image"
         interface.change_recipe(recipe.id, new_name, new_ingredients, new_instructions, new_image)
 
@@ -172,9 +172,9 @@ class InterfaceTests(unittest.TestCase):
         self.assertEqual(new_recipe.user, user)
         self.assertEqual(new_recipe.name, new_name)
         self.assertEqual(new_recipe.ingredients, new_ingredients)
-        self.assertEqual(new_recipe.instructions, new_instructions)
+        self.assertEqual(new_recipe.instructions, instructions)
         self.assertEqual(new_recipe.image, new_image)
-    
+
     def test_delete_recipe(self):
         user1 = interface.create_user("user1", "user1@example.com", "pw")
         user2 = interface.create_user("user2", "user2@example.com", "pw")

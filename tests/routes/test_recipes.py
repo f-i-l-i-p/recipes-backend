@@ -12,9 +12,9 @@ class RecipesTests(RouteTestCase):
         token = create_and_login_user(self, "user")
 
         name = 'the recipe' * 10000
-        ingredients = 'an ingredient\n' * 10000
-        instructions = 'an instruction\n' * 10000
-        image = 'image as a string' * 10000
+        ingredients = create_recipe_ingredients()
+        instructions = create_recipe_instructions()
+        image = create_recipe_image()
 
         res = self.client.post('recipes/create',
                                json={'name': name, 'ingredients': ingredients, 'instructions': instructions,
@@ -22,6 +22,9 @@ class RecipesTests(RouteTestCase):
                                headers={'Authorization': f'Bearer {token}'})
 
         self.assertEqual(res.status_code, 200)
+        recipe = self.data.search_recipes('the')[0]
+        self.assertEqual(recipe.name, name)
+        self.assertEqual(recipe.image, image)
 
     def test_change(self):
         user = create_user(self, "user")
@@ -30,15 +33,14 @@ class RecipesTests(RouteTestCase):
         old_name = "old name"
         old_ingredients = "old"
         old_instructions = "old instructions"
-        old_image = "old image"
+        old_image = create_recipe_image()
         old_recipe = self.data.create_recipe(
             user, old_name, old_ingredients, old_instructions, old_image)
 
         new_name = "new name"
-        new_ingredients = ['new ingredient 1',
-                           'new ingredient 2', 'new ingredient 3']
+        new_ingredients = ['ingredient 1', 'ingredient 2', 'ingredient 3']
         new_instructions = ["new instruction 1", "new instruction 2"]
-        new_image = "new image"
+        new_image = create_recipe_image() + "test"
 
         res = self.client.post('recipes/change',
                                json={'id': old_recipe.id, 'name': new_name, 'ingredients': new_ingredients, 'instructions': new_instructions,
@@ -85,12 +87,14 @@ class RecipesTests(RouteTestCase):
         user = create_user(self, "user")
         token = login_user(self, "user")
 
-        recipe = self.data.create_recipe(user, "", "", "", create_recipe_image())
+        recipe = self.data.create_recipe(
+            user, "", "", "", create_recipe_image())
 
         res = self.client.get(f'recipes/images/{recipe.id}',
-                                headers={'Authorization': f'Bearer {token}'})
+                              headers={'Authorization': f'Bearer {token}'})
 
         self.assertEqual(res.status_code, 200)
+
 
 if __name__ == '__main__':
     unittest.main()

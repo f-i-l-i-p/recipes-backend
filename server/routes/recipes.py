@@ -7,6 +7,7 @@ from flask import Blueprint, request, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from io import BytesIO
 from urllib.request import urlopen
+import re
 
 from server.database import interface
 from server.database.models import Recipe
@@ -25,6 +26,9 @@ def create():
     ingredients = json.dumps(data['ingredients'])
     instructions = json.dumps(data['instructions'])
     image = data['image']
+
+    if not _is_valid_img_uri(image):
+        return '', 415
 
     user = interface.get_user_by_id(get_jwt_identity())
 
@@ -45,6 +49,9 @@ def change():
     ingredients = json.dumps(data['ingredients'])
     instructions = json.dumps(data['instructions'])
     image = data['image']
+
+    if not _is_valid_img_uri(image):
+        return '', 415
 
     user = interface.get_user_by_id(get_jwt_identity())
 
@@ -205,3 +212,11 @@ def _recipe_img_url(recipe: Recipe) -> str:
         return ""
 
     return f"{request.url_root}recipes/images/{recipe.id}"
+
+
+def _is_valid_img_uri(uri: str) -> bool:
+    """
+    Returns true if a string is a valid uri that can be saved in the database.
+    """
+    regex = "data:image/jpeg;base64*."
+    return re.match(regex, uri) != None
